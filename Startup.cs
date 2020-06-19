@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using CoreBot.Dialogs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
@@ -35,13 +36,16 @@ namespace Microsoft.BotBuilderSamples
             services.AddSingleton<FlightBookingRecognizer>();
 
             // Register the BookingDialog.
-            services.AddSingleton<BookingDialog>();
+            //services.AddSingleton<BookingDialog>();
+
+            // Register the UploadDialog.
+            services.AddSingleton<UploadDialog>();
 
             // The MainDialog that will be run by the bot.
-            services.AddSingleton<MainDialog>();
+            services.AddSingleton<ZwiftDialog>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
+            services.AddTransient<IBot, DialogAndWelcomeBot<ZwiftDialog>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

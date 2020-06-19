@@ -1,0 +1,18 @@
+{
+    "name": "ZwiftBot",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "appId": "b48fc720-9039-486a-9ac7-faa20aad1c11",
+            "appPassword": "AvIsNS&6x9+&iJ&Mntnn]FXpT#Gq",
+            "endpoint": "http://localhost:3978/api/messages",
+            "id": "f046ece0-b1ad-11ea-91a9-f9c8e1cb3f3a",
+            "name": "http://localhost:3978/api/messages"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "overrides": null,
+    "path": "C:\\Users\\ingju\\Documents\\zwiftbot\\ZwiftBot.bot"
+}
