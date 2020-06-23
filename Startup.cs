@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.BotBuilderSamples;
 using Microsoft.BotBuilderSamples.Bots;
-using Microsoft.BotBuilderSamples.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Microsoft.BotBuilderSamples
+namespace CoreBot
 {
     public class Startup
     {
@@ -33,10 +33,13 @@ namespace Microsoft.BotBuilderSamples
             services.AddSingleton<ConversationState>();
 
             // Register LUIS recognizer
-            services.AddSingleton<FlightBookingRecognizer>();
+            // //ervices.AddSingleton<FlightBookingRecognizer>();
 
             // Register the BookingDialog.
             //services.AddSingleton<BookingDialog>();
+
+            // Register the PendingDialog.
+            services.AddSingleton<PendingDialog>();
 
             // Register the UploadDialog.
             services.AddSingleton<UploadDialog>();

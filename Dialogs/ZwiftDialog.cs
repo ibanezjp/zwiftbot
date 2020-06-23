@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -13,7 +12,7 @@ namespace CoreBot.Dialogs
     {
         private readonly IStatePropertyAccessor<UserProfile> _userProfileAccessor;
 
-        public ZwiftDialog(UserState userState, UploadDialog uploadDialog)
+        public ZwiftDialog(UserState userState, UploadDialog uploadDialog, PendingDialog pendingDialog)
             : base(nameof(ZwiftDialog))
         {
             _userProfileAccessor = userState.CreateProperty<UserProfile>("UserProfile");
@@ -34,6 +33,7 @@ namespace CoreBot.Dialogs
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
             AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
             AddDialog(uploadDialog);
+            AddDialog(pendingDialog);
 
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
@@ -71,9 +71,9 @@ namespace CoreBot.Dialogs
             switch (stepContext.Values["action"])
             {
                 case "Subir nuevas chapas.":
-                    return await stepContext.BeginDialogAsync(nameof(UploadDialog), null, cancellationToken);
+                    return await stepContext.BeginDialogAsync(nameof(UploadDialog), stepContext.Values["username"], cancellationToken);
                 case "Buscar chapas pendintes.":
-                    return await stepContext.BeginDialogAsync(nameof(UploadDialog), null, cancellationToken);
+                    return await stepContext.BeginDialogAsync(nameof(PendingDialog), stepContext.Values["username"], cancellationToken);
                 default:
                     throw new ArgumentException();
             }
@@ -86,9 +86,9 @@ namespace CoreBot.Dialogs
             switch (stepContext.Values["action"])
             {
                 case "Subir nuevas chapas.":
-                    return await stepContext.BeginDialogAsync(nameof(UploadDialog), null, cancellationToken);
+                    return await stepContext.BeginDialogAsync(nameof(UploadDialog), stepContext.Values["username"], cancellationToken);
                 case "Buscar chapas pendintes.":
-                    return await stepContext.BeginDialogAsync(nameof(UploadDialog), null, cancellationToken);
+                    return await stepContext.BeginDialogAsync(nameof(PendingDialog), stepContext.Values["username"], cancellationToken);
                 default:
                     throw new ArgumentException();
             }

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -46,16 +49,33 @@ namespace CoreBot.Dialogs
 
         private async Task<DialogTurnResult> ConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            return (bool) stepContext.Result
+            return (bool)stepContext.Result
                 ? await stepContext.ReplaceDialogAsync(nameof(WaterfallDialog), cancellationToken: cancellationToken)
                 : await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
 
         private async Task ProcessFile(Attachment attachment, WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            await stepContext.Context.SendActivityAsync("Estoy procesando tu imagen!", null, null, cancellationToken);
-            await Task.Delay(5000, cancellationToken);
-            await stepContext.Context.SendActivityAsync("Conseguiste 3 chapas!", null, null, cancellationToken);
+            await stepContext.Context.SendActivityAsync("Estoy enviando tu imagen para procesar!", null, null, cancellationToken);
+
+            var url = $"https://zwiftapi.azurewebsites.net/api/UploadRoutes/{stepContext.Options}";
+
+            using var webClient = new WebClient();
+            var screenshot = await webClient.DownloadDataTaskAsync(new Uri($"{attachment.ContentUrl}"));
+
+            HttpResponseMessage httpResponseMessage;
+
+            using (var httpClient = new HttpClient())
+            {
+                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = new ByteArrayContent(screenshot)
+                };
+                httpResponseMessage = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
+            }
+
+            if(httpResponseMessage != null && httpResponseMessage.IsSuccessStatusCode)
+                await stepContext.Context.SendActivityAsync("Recibí tu imagen! La estoy procesando!", null, null, cancellationToken);
         }
 
         private static async Task<bool> PicturePromptValidatorAsync(PromptValidatorContext<IList<Attachment>> promptContext, CancellationToken cancellationToken)
