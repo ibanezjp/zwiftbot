@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Choices;
 using Newtonsoft.Json;
 
 namespace CoreBot.Dialogs
@@ -22,6 +23,7 @@ namespace CoreBot.Dialogs
                 {
                     AskMinStepAsync,
                     AskMaxStepAsync,
+                    AskAloneStepAsync,
                     AskPartnerStepAsync,
                     ResultStepAsync
                 };
@@ -29,7 +31,7 @@ namespace CoreBot.Dialogs
                 // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
                 AddDialog(new TextPrompt(nameof(TextPrompt)));
-                //AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
+                AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
                 //AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
                 //AddDialog(uploadDialog);
             }
@@ -49,25 +51,51 @@ namespace CoreBot.Dialogs
                 new PromptOptions { Prompt = MessageFactory.Text("Ahora decime la cantidad máxima de KMs que querés que tenga?") }, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> AskPartnerStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> AskAloneStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["max"] = (string)stepContext.Result;
 
-            return await stepContext.PromptAsync(nameof(TextPrompt),
-                new PromptOptions { Prompt = MessageFactory.Text("Con quien vas a rodar?") }, cancellationToken);
+            return await stepContext.PromptAsync(nameof(ChoicePrompt),
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("Cómo vas a rodar?"),
+                    Choices = ChoiceFactory.ToChoices(new List<string> { "Sólo.", "Con amigos." }),
+                }, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> AskPartnerStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["mode"] = ((FoundChoice)stepContext.Result).Value;
+
+            switch (stepContext.Values["mode"])
+            {
+                case "Sólo.":
+                    return await stepContext.ContinueDialogAsync(cancellationToken);
+                case "Con amigos.":
+                    return await stepContext.PromptAsync(nameof(TextPrompt),
+                        new PromptOptions { Prompt = MessageFactory.Text("Con quien vas a rodar?") }, cancellationToken);
+                default:
+                    throw new ArgumentException();
+            }
         }
 
         private async Task<DialogTurnResult> ResultStepAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            stepContext.Values["ids"] = (string) stepContext.Result;
-
-            await stepContext.Context.SendActivityAsync("Estoy buscandote algunos circuitos...", null, null,
+            await stepContext.Context.SendActivityAsync("Estoy buscándote algunos circuitos...", null, null,
                 cancellationToken);
 
-            var ids = $"{stepContext.Options},{stepContext.Values["ids"]}";
+            string url;
 
-            var url = string.Format("https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={0}&min={1}&max={2}",ids, stepContext.Values["min"], stepContext.Values["max"]);
+            if (stepContext.Reason == DialogReason.ContinueCalled)
+            {
+                url = $"https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={stepContext.Options}&min={stepContext.Values["min"]}&max={stepContext.Values["max"]}";
+            }
+            else
+            {
+                var ids = $"{stepContext.Options},{stepContext.Values["ids"]}";
+                url =$"https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={ids}&min={stepContext.Values["min"]}&max={stepContext.Values["max"]}";
+            }
 
             List<Route> routes;
 
