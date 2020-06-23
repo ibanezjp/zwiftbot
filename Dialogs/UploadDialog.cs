@@ -58,7 +58,7 @@ namespace CoreBot.Dialogs
         {
             await stepContext.Context.SendActivityAsync("Estoy enviando tu imagen para procesar!", null, null, cancellationToken);
 
-            var url = $"https://zwiftapi.azurewebsites.net/api/UploadRoutes/{stepContext.Options}";
+            var url = $"https://zwiftapi.azurewebsites.net/api/UploadRoutes/{stepContext.Options.ToString().ToLowerInvariant()}";
 
             using var webClient = new WebClient();
             var screenshot = await webClient.DownloadDataTaskAsync(new Uri($"{attachment.ContentUrl}"));
