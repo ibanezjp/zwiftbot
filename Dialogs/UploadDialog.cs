@@ -50,7 +50,7 @@ namespace CoreBot.Dialogs
         private async Task<DialogTurnResult> ConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             return (bool)stepContext.Result
-                ? await stepContext.ReplaceDialogAsync(nameof(WaterfallDialog), cancellationToken: cancellationToken)
+                ? await stepContext.ReplaceDialogAsync(nameof(WaterfallDialog), cancellationToken: cancellationToken, options: stepContext.Options)
                 : await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
 
