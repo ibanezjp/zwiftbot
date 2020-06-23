@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using F23.StringSimilarity;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
@@ -31,11 +30,21 @@ namespace CoreBot.Dialogs
 
                 // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
-                AddDialog(new TextPrompt(nameof(TextPrompt)));
+                AddDialog(new TextPrompt($"{nameof(TextPrompt)}", Validator));
                 AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
                 //AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
                 //AddDialog(uploadDialog);
             }
+        }
+
+        private Task<bool> Validator(PromptValidatorContext<string> promptValidatorContext, CancellationToken cancellationtoken)
+        {
+            if (!promptValidatorContext.Recognized.Succeeded) 
+                return Task.FromResult(false);
+
+            return !int.TryParse(promptValidatorContext.Recognized.Value, out var km) ? 
+                Task.FromResult(false) : 
+                Task.FromResult(km > 0);
         }
 
         private static async Task<DialogTurnResult> AskMinStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
