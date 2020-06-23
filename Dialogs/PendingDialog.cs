@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,11 +87,10 @@ namespace CoreBot.Dialogs
 
             foreach (var routesByWorld in tmp.GroupBy(x => x.World))
             {
-                stringBuilder.AppendLine(routesByWorld.Key);
-                stringBuilder.AppendLine("==============");
+                stringBuilder.AppendLine($"# {routesByWorld.Key}");
                 foreach (var route in routesByWorld)
                 {
-                    stringBuilder.AppendLine(route.ToString());
+                    stringBuilder.AppendLine($"{route}\n");
                 }
             }
 
