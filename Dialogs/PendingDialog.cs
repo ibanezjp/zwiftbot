@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using F23.StringSimilarity;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
@@ -60,6 +61,7 @@ namespace CoreBot.Dialogs
                 {
                     Prompt = MessageFactory.Text("Cómo vas a rodar?"),
                     Choices = ChoiceFactory.ToChoices(new List<string> { "Sólo.", "Con amigos." }),
+                    Style = ListStyle.List
                 }, cancellationToken);
         }
 
@@ -67,16 +69,16 @@ namespace CoreBot.Dialogs
         {
             stepContext.Values["mode"] = ((FoundChoice)stepContext.Result).Value;
 
-            switch (stepContext.Values["mode"])
-            {
-                case "Sólo.":
-                    return await stepContext.ContinueDialogAsync(cancellationToken);
-                case "Con amigos.":
-                    return await stepContext.PromptAsync(nameof(TextPrompt),
-                        new PromptOptions { Prompt = MessageFactory.Text("Con quien vas a rodar?") }, cancellationToken);
-                default:
-                    throw new ArgumentException();
-            }
+            //var jaroWinkler = new JaroWinkler();
+            //var tmp1 = jaroWinkler.Distance(stepContext.Values["mode"].ToString(), "Solo");
+            //var tmp2 = jaroWinkler.Distance(stepContext.Values["mode"].ToString(), "Con amigos.");
+
+            //if (tmp1 > tmp2)
+            if(!stepContext.Values["mode"].ToString().Equals("Sólo.", StringComparison.InvariantCultureIgnoreCase))
+                return await stepContext.PromptAsync(nameof(TextPrompt),
+                    new PromptOptions {Prompt = MessageFactory.Text("Con quien vas a rodar?")}, cancellationToken);
+
+            return await stepContext.ContinueDialogAsync(cancellationToken);
         }
 
         private async Task<DialogTurnResult> ResultStepAsync(WaterfallStepContext stepContext,
@@ -85,15 +87,17 @@ namespace CoreBot.Dialogs
             await stepContext.Context.SendActivityAsync("Estoy buscándote algunos circuitos...", null, null,
                 cancellationToken);
 
+            var username = stepContext.Options.ToString().ToLowerInvariant();
+
             string url;
 
             if (stepContext.Reason == DialogReason.ContinueCalled)
             {
-                url = $"https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={stepContext.Options}&min={stepContext.Values["min"]}&max={stepContext.Values["max"]}";
+                url = $"https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={username}&min={stepContext.Values["min"]}&max={stepContext.Values["max"]}";
             }
             else
             {
-                var ids = $"{stepContext.Options},{stepContext.Values["ids"]}";
+                var ids = $"{username},{stepContext.Result.ToString().ToLowerInvariant()}";
                 url =$"https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={ids}&min={stepContext.Values["min"]}&max={stepContext.Values["max"]}";
             }
 
