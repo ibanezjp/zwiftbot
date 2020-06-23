@@ -76,6 +76,8 @@ namespace CoreBot.Dialogs
 
             if(httpResponseMessage != null && httpResponseMessage.IsSuccessStatusCode)
                 await stepContext.Context.SendActivityAsync("Recibí tu imagen! La estoy procesando!", null, null, cancellationToken);
+            else
+                await stepContext.Context.SendActivityAsync("Ufff se me complicó! No puede recibir tu imagen!", null, null, cancellationToken);
         }
 
         private static async Task<bool> PicturePromptValidatorAsync(PromptValidatorContext<IList<Attachment>> promptContext, CancellationToken cancellationToken)
