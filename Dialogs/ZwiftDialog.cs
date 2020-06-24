@@ -106,7 +106,7 @@ namespace CoreBot.Dialogs
             if (stepContext.Values.ContainsKey("username"))
                 return await stepContext.ContinueDialogAsync(cancellationToken);
 
-            stepContext.Values["username"] = (string)stepContext.Result;
+            stepContext.Values["username"] = stepContext.Result.ToString().ToLowerInvariant();
 
             switch (stepContext.Values["action"])
             {
