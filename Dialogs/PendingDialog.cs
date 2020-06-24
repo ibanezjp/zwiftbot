@@ -30,7 +30,9 @@ namespace CoreBot.Dialogs
 
                 // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
-                AddDialog(new TextPrompt($"{nameof(TextPrompt)}", Validator));
+                AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Min_Km", Validator));
+                AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Max_Km", Validator));
+                AddDialog(new TextPrompt($"{nameof(TextPrompt)}"));
                 AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
                 //AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
                 //AddDialog(uploadDialog);
@@ -49,7 +51,7 @@ namespace CoreBot.Dialogs
 
         private static async Task<DialogTurnResult> AskMinStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            return await stepContext.PromptAsync(nameof(TextPrompt),
+            return await stepContext.PromptAsync($"{nameof(TextPrompt)}_Min_Km",
                 new PromptOptions { Prompt = MessageFactory.Text("Te voy a ayudar a buscar un circuito, decime la cantidad mínima de KMs que querés que tenga?") }, cancellationToken);
         }
 
@@ -57,7 +59,7 @@ namespace CoreBot.Dialogs
         {
             stepContext.Values["min"] = (string)stepContext.Result;
 
-            return await stepContext.PromptAsync(nameof(TextPrompt),
+            return await stepContext.PromptAsync($"{nameof(TextPrompt)}_Max_Km",
                 new PromptOptions { Prompt = MessageFactory.Text("Ahora decime la cantidad máxima de KMs que querés que tenga?") }, cancellationToken);
         }
 
