@@ -39,6 +39,9 @@ namespace CoreBot
             //services.AddSingleton<BookingDialog>();
 
             // Register the PendingDialog.
+            services.AddSingleton<AddManualDialog>();
+
+            // Register the PendingDialog.
             services.AddSingleton<PendingDialog>();
 
             // Register the UploadDialog.

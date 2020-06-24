@@ -12,7 +12,11 @@ namespace CoreBot.Dialogs
     {
         private readonly IStatePropertyAccessor<UserProfile> _userProfileAccessor;
 
-        public ZwiftDialog(UserState userState, UploadDialog uploadDialog, PendingDialog pendingDialog)
+        public ZwiftDialog(UserState userState, 
+                           UploadDialog uploadDialog, 
+                           PendingDialog pendingDialog, 
+                           AddManualDialog addManualDialog, 
+                           RemoveManualDialog removeManualDialog) 
             : base(nameof(ZwiftDialog))
         {
             _userProfileAccessor = userState.CreateProperty<UserProfile>("UserProfile");
@@ -34,6 +38,8 @@ namespace CoreBot.Dialogs
             AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
             AddDialog(uploadDialog);
             AddDialog(pendingDialog);
+            AddDialog(addManualDialog);
+            AddDialog(removeManualDialog);
 
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
@@ -48,7 +54,13 @@ namespace CoreBot.Dialogs
                     new PromptOptions
                     {
                         Prompt = MessageFactory.Text("En que más te puedo ayudar?"),
-                        Choices = ChoiceFactory.ToChoices(new List<string> { "Subir nuevas chapas.", "Buscar chapas pendintes." }),
+                        Choices = ChoiceFactory.ToChoices(new List<string>
+                        {
+                            "Subir nuevas chapas.", 
+                            "Buscar chapas pendintes.",
+                            "Agregar chapa manualmente.",
+                            "Quitar chapa manualmente"
+                        })
                     }, cancellationToken);
             }
 
@@ -56,7 +68,13 @@ namespace CoreBot.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Buenas! En qué te puedo ayudar?"),
-                    Choices = ChoiceFactory.ToChoices(new List<string> { "Subir nuevas chapas.", "Buscar chapas pendintes." }),
+                    Choices = ChoiceFactory.ToChoices(new List<string>
+                    {
+                        "Subir nuevas chapas.",
+                        "Buscar chapas pendintes.",
+                        "Agregar chapa manualmente.",
+                        "Quitar chapa manualmente"
+                    })
                 }, cancellationToken);
         }
 
@@ -74,6 +92,10 @@ namespace CoreBot.Dialogs
                     return await stepContext.BeginDialogAsync(nameof(UploadDialog), stepContext.Values["username"], cancellationToken);
                 case "Buscar chapas pendintes.":
                     return await stepContext.BeginDialogAsync(nameof(PendingDialog), stepContext.Values["username"], cancellationToken);
+                case "Agregar chapa manualmente.":
+                    return await stepContext.BeginDialogAsync(nameof(AddManualDialog), stepContext.Values["username"], cancellationToken);
+                case "Quitar chapa manualmente.":
+                    return await stepContext.BeginDialogAsync(nameof(RemoveManualDialog), stepContext.Values["username"], cancellationToken);
                 default:
                     throw new ArgumentException();
             }
@@ -89,6 +111,10 @@ namespace CoreBot.Dialogs
                     return await stepContext.BeginDialogAsync(nameof(UploadDialog), stepContext.Values["username"], cancellationToken);
                 case "Buscar chapas pendintes.":
                     return await stepContext.BeginDialogAsync(nameof(PendingDialog), stepContext.Values["username"], cancellationToken);
+                case "Agregar chapa manualmente.":
+                    return await stepContext.BeginDialogAsync(nameof(AddManualDialog), stepContext.Values["username"], cancellationToken);
+                case "Quitar chapa manualmente.":
+                    return await stepContext.BeginDialogAsync(nameof(RemoveManualDialog), stepContext.Values["username"], cancellationToken);
                 default:
                     throw new ArgumentException();
             }

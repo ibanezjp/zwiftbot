@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using F23.StringSimilarity;
 using Newtonsoft.Json;
 
 namespace CoreBot
@@ -21,6 +24,34 @@ namespace CoreBot
         public override string ToString()
         {
             return $"{Name} {Distance / 1000}Kms";
+        }
+    }
+
+    public class RoutesList : List<Route>
+    {
+        public Route FindRoute(string name)
+        {
+            var route = this.SingleOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+
+            if (route != null)
+                return route;
+
+            var longestCommonSubsequence = new LongestCommonSubsequence();
+
+            var distance = double.MaxValue;
+            Route currentRoute = null;
+
+            foreach (var tmp in this)
+            {
+                var currentDistance = longestCommonSubsequence.Distance(tmp.Name, name);
+                if (currentDistance < distance)
+                {
+                    distance = currentDistance;
+                    currentRoute = tmp;
+                }
+            }
+
+            return currentRoute;
         }
     }
 
