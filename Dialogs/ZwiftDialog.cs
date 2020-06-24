@@ -59,7 +59,7 @@ namespace CoreBot.Dialogs
                             "Subir nuevas chapas.", 
                             "Buscar chapas pendintes.",
                             "Agregar chapa manualmente.",
-                            "Quitar chapa manualmente"
+                            "Quitar chapa manualmente."
                         })
                     }, cancellationToken);
             }
@@ -73,7 +73,7 @@ namespace CoreBot.Dialogs
                         "Subir nuevas chapas.",
                         "Buscar chapas pendintes.",
                         "Agregar chapa manualmente.",
-                        "Quitar chapa manualmente"
+                        "Quitar chapa manualmente."
                     })
                 }, cancellationToken);
         }
@@ -103,6 +103,9 @@ namespace CoreBot.Dialogs
 
         private async Task<DialogTurnResult> NameConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            if (stepContext.Values.ContainsKey("username"))
+                return await stepContext.ContinueDialogAsync(cancellationToken);
+
             stepContext.Values["username"] = (string)stepContext.Result;
 
             switch (stepContext.Values["action"])

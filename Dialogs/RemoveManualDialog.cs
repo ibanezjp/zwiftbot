@@ -59,7 +59,7 @@ namespace CoreBot.Dialogs
 
             var user = (User) stepContext.Values["user"];
 
-            var route = user.PendingRoutes.FindRoute(selectedRoute);
+            var route = user.CompletedRoutes.FindRoute(selectedRoute);
 
             HttpResponseMessage httpResponseMessage;
 
