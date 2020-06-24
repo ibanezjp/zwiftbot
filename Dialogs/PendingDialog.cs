@@ -108,7 +108,8 @@ namespace CoreBot.Dialogs
             }
             else
             {
-                var ids = $"{username},{stepContext.Result.ToString().ToLowerInvariant()}";
+                var users = stepContext.Result.ToString().Split(',');
+                var ids = $"{username},{string.Join(',',users.Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Trim().ToLowerInvariant()))}";
                 url =$"https://zwiftapi.azurewebsites.net/api/GetPendingRoutes?ids={ids}&min={stepContext.Values["min"]}&max={stepContext.Values["max"]}";
             }
 
