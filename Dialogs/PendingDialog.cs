@@ -30,8 +30,8 @@ namespace CoreBot.Dialogs
 
                 // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
-                AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Min_Km", Validator));
-                AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Max_Km", Validator));
+                AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Min_Km", ValidatorMin));
+                AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Max_Km", ValidatorMax));
                 AddDialog(new TextPrompt($"{nameof(TextPrompt)}"));
                 AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
                 //AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
@@ -39,14 +39,24 @@ namespace CoreBot.Dialogs
             }
         }
 
-        private Task<bool> Validator(PromptValidatorContext<string> promptValidatorContext, CancellationToken cancellationtoken)
+        private Task<bool> ValidatorMin(PromptValidatorContext<string> promptValidatorContext, CancellationToken cancellationtoken)
         {
             if (!promptValidatorContext.Recognized.Succeeded) 
                 return Task.FromResult(false);
 
             return !int.TryParse(promptValidatorContext.Recognized.Value, out var km) ? 
                 Task.FromResult(false) : 
-                Task.FromResult(km > 0);
+                Task.FromResult(km >= 0);
+        }
+
+        private Task<bool> ValidatorMax(PromptValidatorContext<string> promptValidatorContext, CancellationToken cancellationtoken)
+        {
+            if (!promptValidatorContext.Recognized.Succeeded)
+                return Task.FromResult(false);
+
+            return !int.TryParse(promptValidatorContext.Recognized.Value, out var km) ?
+                Task.FromResult(false) :
+                Task.FromResult(km >= 1);
         }
 
         private static async Task<DialogTurnResult> AskMinStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
