@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -25,8 +26,21 @@ namespace CoreBot.Dialogs
 
                 // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
-                AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
+                AddDialog(new ChoicePrompt(nameof(ChoicePrompt), Validator));
             }
+        }
+
+        private async Task<bool> Validator(PromptValidatorContext<FoundChoice> promptContext, CancellationToken cancellationToken)
+        {
+            if (promptContext.Recognized.Succeeded)
+                return true;
+
+            if (promptContext.AttemptCount <= 3) 
+                return false;
+
+            await promptContext.Context.SendActivityAsync("No elegiste ninguna opción correcta!", cancellationToken: cancellationToken);
+            promptContext.Recognized.Value = new FoundChoice { Value = "CANCEL" };
+            return true;
         }
 
         private async Task<DialogTurnResult> AddStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -56,6 +70,9 @@ namespace CoreBot.Dialogs
             CancellationToken cancellationToken)
         {
             var selectedRoute = ((FoundChoice)stepContext.Result).Value;
+
+            if(selectedRoute.Equals("CANCEL",StringComparison.InvariantCultureIgnoreCase))
+                return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
 
             var user = (User) stepContext.Values["user"];
 
