@@ -23,7 +23,7 @@ namespace CoreBot
 
         public override string ToString()
         {
-            return $"{Name} {Distance / 1000}km + {DistanceFromStart / 1000}km";
+            return $"{Name} {Distance / 1000}km + {(double)DistanceFromStart / 1000:F1}km";
         }
     }
 
