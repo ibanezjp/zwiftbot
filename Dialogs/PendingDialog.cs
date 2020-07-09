@@ -137,19 +137,27 @@ namespace CoreBot.Dialogs
                 .OrderBy(x => x.Distance).ToList();
 
 
-            var stringBuilder = new StringBuilder();
-
-            foreach (var routesByWorld in tmp.GroupBy(x => x.World))
+            if (tmp.Count > 0)
             {
-                stringBuilder.AppendLine($"# {routesByWorld.Key}");
-                foreach (var route in routesByWorld)
-                {
-                    stringBuilder.AppendLine($"{route}\n");
-                }
-            }
+                var stringBuilder = new StringBuilder();
 
-            await stepContext.Context.SendActivityAsync(stringBuilder.ToString(), null, null,
-                cancellationToken);
+                foreach (var routesByWorld in tmp.GroupBy(x => x.World))
+                {
+                    stringBuilder.AppendLine($"# {routesByWorld.Key}");
+                    foreach (var route in routesByWorld)
+                    {
+                        stringBuilder.AppendLine($"{route}\n");
+                    }
+                }
+
+                await stepContext.Context.SendActivityAsync(stringBuilder.ToString(), null, null,
+                    cancellationToken);
+            }
+            else
+            {
+                await stepContext.Context.SendActivityAsync("No encontré ninguna ruta que coincida con tus parámetros de búsqueda!", null, null,
+                    cancellationToken);
+            }
 
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
