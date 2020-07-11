@@ -60,7 +60,7 @@ namespace CoreBot.Dialogs
                 {
                     Prompt = MessageFactory.Text("Seleccioná la ruta que querés agregar:"),
                     Choices = ChoiceFactory.ToChoices(user.PendingRoutes
-                        .Where(x => x.HasAward && !x.EventOnly && (x.AllowedSports & Sports.Cycling) == Sports.Cycling)
+                        .Where(x => x.HasAward && (x.AllowedSports & Sports.Cycling) == Sports.Cycling)
                         .Select(x => x.Name).ToList()),
                     Style = ListStyle.List
                 }, cancellationToken);
