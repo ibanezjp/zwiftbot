@@ -25,8 +25,21 @@ namespace CoreBot.Dialogs
 
                 // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
-                AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
+                AddDialog(new ChoicePrompt(nameof(ChoicePrompt), Validator));
             }
+        }
+
+        private async Task<bool> Validator(PromptValidatorContext<FoundChoice> promptContext, CancellationToken cancellationToken)
+        {
+            if (promptContext.Recognized.Succeeded)
+                return true;
+
+            if (promptContext.AttemptCount <= 3)
+                return false;
+
+            await promptContext.Context.SendActivityAsync("No elegiste ninguna opción correcta!", cancellationToken: cancellationToken);
+            promptContext.Recognized.Value = new FoundChoice { Value = "CANCEL" };
+            return true;
         }
 
         private async Task<DialogTurnResult> AddStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
