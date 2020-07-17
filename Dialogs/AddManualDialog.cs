@@ -1,6 +1,6 @@
-﻿using CoreBot.Dialogs.BaseDialogs;
+﻿using ZwiftBot.Dialogs.BaseDialogs;
 
-namespace CoreBot.Dialogs
+namespace ZwiftBot.Dialogs
 {
     public class AddManualDialog : BaseManualDialog
     {

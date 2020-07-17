@@ -10,7 +10,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Newtonsoft.Json;
 
-namespace CoreBot.Dialogs
+namespace ZwiftBot.Dialogs
 {
     public class PendingDialog : ComponentDialog
     {
@@ -18,7 +18,6 @@ namespace CoreBot.Dialogs
             : base(nameof(PendingDialog))
         {
             {
-                // This array defines how the Waterfall will execute.
                 var waterfallInitSteps = new WaterfallStep[]
                 {
                     AskMinStepAsync,
@@ -28,14 +27,11 @@ namespace CoreBot.Dialogs
                     ResultStepAsync
                 };
 
-                // Add named dialogs to the DialogSet. These names are saved in the dialog state.
                 AddDialog(new WaterfallDialog($"{nameof(WaterfallDialog)}", waterfallInitSteps));
                 AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Min_Km", ValidatorMin));
                 AddDialog(new TextPrompt($"{nameof(TextPrompt)}_Max_Km", ValidatorMax));
                 AddDialog(new TextPrompt($"{nameof(TextPrompt)}"));
                 AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
-                //AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
-                //AddDialog(uploadDialog);
             }
         }
 
@@ -90,11 +86,6 @@ namespace CoreBot.Dialogs
         {
             stepContext.Values["mode"] = ((FoundChoice)stepContext.Result).Value;
 
-            //var jaroWinkler = new JaroWinkler();
-            //var tmp1 = jaroWinkler.Distance(stepContext.Values["mode"].ToString(), "Solo");
-            //var tmp2 = jaroWinkler.Distance(stepContext.Values["mode"].ToString(), "Con amigos.");
-
-            //if (tmp1 > tmp2)
             if(!stepContext.Values["mode"].ToString().Equals("Sólo.", StringComparison.InvariantCultureIgnoreCase))
                 return await stepContext.PromptAsync(nameof(TextPrompt),
                     new PromptOptions {Prompt = MessageFactory.Text("Con quien vas a rodar?")}, cancellationToken);

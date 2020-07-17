@@ -9,7 +9,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
-namespace CoreBot.Dialogs
+namespace ZwiftBot.Dialogs
 {
     public class UploadDialog : ComponentDialog
     {

@@ -6,20 +6,16 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 
-namespace CoreBot.Dialogs
+namespace ZwiftBot.Dialogs
 {
     public class ZwiftDialog : ComponentDialog
     {
-        private readonly IStatePropertyAccessor<UserProfile> _userProfileAccessor;
-
-        public ZwiftDialog(UserState userState, 
-                           UploadDialog uploadDialog, 
+        public ZwiftDialog(UploadDialog uploadDialog, 
                            PendingDialog pendingDialog, 
                            AddManualDialog addManualDialog, 
                            RemoveManualDialog removeManualDialog) 
             : base(nameof(ZwiftDialog))
         {
-            _userProfileAccessor = userState.CreateProperty<UserProfile>("UserProfile");
 
             // This array defines how the Waterfall will execute.
             var waterfallInitSteps = new WaterfallStep[]

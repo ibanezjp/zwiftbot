@@ -4,7 +4,7 @@ using System.Linq;
 using F23.StringSimilarity;
 using Newtonsoft.Json;
 
-namespace CoreBot
+namespace ZwiftBot
 {
     public class Route
     {

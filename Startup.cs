@@ -1,17 +1,13 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-using CoreBot.Dialogs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
-using Microsoft.BotBuilderSamples;
-using Microsoft.BotBuilderSamples.Bots;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ZwiftBot.Bots;
+using ZwiftBot.Dialogs;
 
-namespace CoreBot
+namespace ZwiftBot
 {
     public class Startup
     {
@@ -32,12 +28,6 @@ namespace CoreBot
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
 
-            // Register LUIS recognizer
-            // //ervices.AddSingleton<FlightBookingRecognizer>();
-
-            // Register the BookingDialog.
-            //services.AddSingleton<BookingDialog>();
-
             // Register the RemoveManualDialog.
             services.AddSingleton<RemoveManualDialog>();
 
@@ -54,7 +44,7 @@ namespace CoreBot
             services.AddSingleton<ZwiftDialog>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, DialogAndWelcomeBot<ZwiftDialog>>();
+            services.AddTransient<IBot, DialogBot<ZwiftDialog>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

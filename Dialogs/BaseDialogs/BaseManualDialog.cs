@@ -9,7 +9,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Newtonsoft.Json;
 
-namespace CoreBot.Dialogs.BaseDialogs
+namespace ZwiftBot.Dialogs.BaseDialogs
 {
     public abstract class BaseManualDialog : ComponentDialog
     {

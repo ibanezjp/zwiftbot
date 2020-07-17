@@ -3,15 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <AssemblyName>ZwiftBot</AssemblyName>
+    <RootNamespace>ZwiftBot</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Remove="Cards\welcomeCard.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Cards\welcomeCard.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="F23.StringSimilarity" Version="3.1.0" />
