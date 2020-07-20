@@ -76,7 +76,7 @@ namespace ZwiftBot.Dialogs.BaseDialogs
 
             var user = (User) stepContext.Values["user"];
 
-            var route = user.PendingRoutes.FindRoute(selectedRoute);
+            var route = GetRoutes(user).FindRoute(selectedRoute);
 
             HttpResponseMessage httpResponseMessage;
 
