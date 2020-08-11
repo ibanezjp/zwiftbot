@@ -59,8 +59,8 @@ namespace ZwiftBot.Dialogs.BaseDialogs
                 {
                     Prompt = MessageFactory.Text(GetSelectMessage()),
                     Choices = ChoiceFactory.ToChoices(GetRoutes(user)
-                        //.Where(x => x.HasAward && !x.EventOnly && (x.AllowedSports & Sports.Cycling) == Sports.Cycling)
-                        .Where(x => (x.AllowedSports & Sports.Cycling) == Sports.Cycling)
+                        .Where(x => x.HasAward && !x.EventOnly && (x.AllowedSports & Sports.Cycling) == Sports.Cycling)
+                        //.Where(x => (x.AllowedSports & Sports.Cycling) == Sports.Cycling)
                         .Select(x => x.Name).ToList()),
                     Style = ListStyle.List
                 }, cancellationToken);
